@@ -61,4 +61,4 @@ Ensure correct ACME server URL is used (--server flag):
 Known issues
 -----
 
-There have been issues reported with certbot interactive prompt causing certificates of Let's Encrypt instead of GlobalSign being issued. It is recommended to hand over parameters directly using the documented flags.
+There have been issues reported with certbot interactive prompt causing certificates of Let's Encrypt instead of Sectigo being issued. It is recommended to hand over parameters directly using the documented flags.
