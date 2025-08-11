@@ -11,11 +11,11 @@ Installation
 Install the tz-bot script
    1. Quick: 
       1. run:
-      `bash <(wget -q -O - https://github.com/mattTrustzone/tz-bot/raw/master/get-tzbot.sh)`
+      `bash <(wget -q -O - https://github.com/mattTrustzone/tz-bot-sectigo/raw/master/get-tzbot.sh)`
       2. Done!
    2. Careful: 
       1. Run: 
-      `wget -q -O - https://github.com/mattTrustzone/tz-bot/raw/master/get-tzbot.sh > get-tzbot.sh`
+      `wget -q -O - https://github.com/mattTrustzone/tz-bot-sectigo/raw/master/get-tzbot.sh > get-tzbot.sh`
       2. Inspect the file to see that it does what it is supposed to do
       3. Run: `source get-tzbot.sh`
    3. Download via portal:

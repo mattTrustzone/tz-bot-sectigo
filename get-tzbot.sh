@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Use ':-' to ensure the default is used if BOT_SCRIPT_LOCATION is unset or empty.
-BOT_SCRIPT_LOCATION=${BOT_SCRIPT_LOCATION:-"https://raw.githubusercontent.com/mattTrustzone/tz-bot/master/tz-bot.sh"}
+BOT_SCRIPT_LOCATION=${BOT_SCRIPT_LOCATION:-"https://raw.githubusercontent.com/mattTrustzone/tz-bot-sectigo/master/tz-bot.sh"}
 
 # Check if certbot is installed; if not, install certbot using Snap.
 if ! command -v certbot >/dev/null 2>&1; then
