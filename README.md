@@ -54,7 +54,7 @@ Recommendations
 Ensure correct ACME server URL is used (--server flag):
 
 ```
- --server https://emea.acme.atlas.globalsign.com/directory
+ --server https://acme.sectigo.com/v2/DV
 ```
 
 
