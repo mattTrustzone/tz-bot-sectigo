@@ -7,12 +7,14 @@ if ! command -v lego >/dev/null 2>&1; then
     echo "lego is not installed. Checking for Go..."
 
     # Check if Go is installed and is at least version 1.23
-    if ! command -v go >/dev/null 2>&1 || [[ $(go version | awk '{print $3}' | cut -d. -f2) -lt 23 ]]; then
+    if ! command -v go >/dev/null 2>&1 || [[ $(go version 2>/dev/null | awk '{print $3}' | cut -d. -f2) -lt 23 ]]; then
         echo "Go is not installed or is too old. Installing the latest version of Go..."
 
         # Download and install the latest version of Go
         sudo rm -rf /usr/local/go
-        curl -s https://go.dev/dl/go1.22.3.linux-amd64.tar.gz | sudo tar -C /usr/local -xz
+        curl -sL https://go.dev/dl/go1.22.3.linux-amd64.tar.gz | sudo tar -C /usr/local -xz
+
+        # Add Go to PATH
         export PATH=$PATH:/usr/local/go/bin
 
         # Verify Go installation
@@ -34,7 +36,7 @@ if ! command -v lego >/dev/null 2>&1; then
 fi
 
 function install_tzbot() {
-    if ! curl -sf "$BOT_SCRIPT_LOCATION" -o /tmp/tz-bot; then
+    if ! curl -sfL "$BOT_SCRIPT_LOCATION" -o /tmp/tz-bot; then
         echo "Error: Unable to download file from $BOT_SCRIPT_LOCATION"
         exit 1
     fi
