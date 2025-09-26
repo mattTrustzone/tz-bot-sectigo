@@ -7,21 +7,19 @@ if ! command -v lego >/dev/null 2>&1; then
     echo "lego is not installed. Checking for Go..."
 
     # Check if Go is installed and is at least version 1.23
-    if ! command -v go >/dev/null 2>&1 || [[ $(go version 2>/dev/null | awk '{print $3}' | cut -d. -f2) -lt 23 ]]; then
-        echo "Go is not installed or is too old. Installing the latest version of Go..."
+    if ! command -v go >/dev/null 2>&1; then
+        echo "Go is not installed."
+        echo "Please install Go 1.23 or later from https://go.dev/dl/ and rerun this script."
+        exit 1
+    fi
 
-        # Download and install the latest version of Go
-        sudo rm -rf /usr/local/go
-        curl -sL https://go.dev/dl/go1.22.3.linux-amd64.tar.gz | sudo tar -C /usr/local -xz
-
-        # Add Go to PATH
-        export PATH=$PATH:/usr/local/go/bin
-
-        # Verify Go installation
-        if ! command -v go >/dev/null 2>&1; then
-            echo "Go installation failed. Please install Go manually and rerun this script."
-            exit 1
-        fi
+    # Check Go version
+    GO_VERSION=$(go version 2>/dev/null | awk '{print $3}')
+    GO_MAJOR=$(echo "$GO_VERSION" | cut -d. -f2)
+    if [[ "$GO_MAJOR" -lt 23 ]]; then
+        echo "Go version $GO_VERSION is too old. lego requires Go 1.23 or later."
+        echo "Please upgrade Go from https://go.dev/dl/ and rerun this script."
+        exit 1
     fi
 
     # Install lego using go install
