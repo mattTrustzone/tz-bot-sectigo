@@ -2,8 +2,8 @@ tz-bot
 ===========
 
 This repository contains a wrapper script that makes it easier to use 
-Electronic Frontier Foundation's (EFF's) Certbot with the TRUSTZONE's ACME Pro Sectigo DV server.
-This wrapper is a fork of ZEROSSL's zerossl-bot
+the Lego ACME clien (https://github.com/go-acme/lego) with the TRUSTZONE's ACME Pro Sectigo DV server.
+This wrapper is a re-working of ZEROSSL's zerossl-bot
 
 Installation
 ------------
