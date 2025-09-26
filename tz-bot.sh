@@ -1,46 +1,58 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-if [ ! -x "$(which certbot)" ]; then
-   echo "You have to install certbot"
-   exit 1
+if ! command -v lego >/dev/null 2>&1; then
+    echo "Error: lego is not installed. See https://github.com/go-acme/lego" >&2
+    exit 1
 fi
 
-CERTBOT_ARGS=()
+_API_KEY=""
+LEGO_ARGS=()
 
-# New function to prompt for EAB credentials
-function prompt_for_eab_credentials() {
+# Function to prompt for EAB credentials
+prompt_for_eab_credentials() {
     read -p "Enter EAB KID: " _EAB_KID
-    read -p "Enter EAB HMAC Key: " _EAB_HMAC_KEY
-    CERTBOT_ARGS+=(--eab-kid "${_EAB_KID:?}" --eab-hmac-key "${_EAB_HMAC_KEY:?}" --key-type rsa --agree-tos --register-unsafely-without-email --no-eff-email)
-    echo "EAB credentials added to CERTBOT_ARGS"
+    read -s -p "Enter EAB HMAC Key: " _EAB_HMAC_KEY
+    echo  # Move to a new line after secret input
+    if [ -z "$_EAB_KID" ] || [ -z "$_EAB_HMAC_KEY" ]; then
+        echo "Error: EAB KID and HMAC Key cannot be empty." >&2
+        exit 1
+    fi
+    LEGO_ARGS+=(
+        --eab
+        --kid "$_EAB_KID"
+        --hmac "$_EAB_HMAC_KEY"
+    )
 }
 
+# Parse arguments
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        --tz-api-key=*)
-            _API_KEY=${1#*=}
-            echo "API Key set to $_API_KEY"
-        ;;
+        --tz-api-key=*) _API_KEY="${1#*=}" ;;
         --tz-api-key|-z)
-           _API_KEY=$2
-           shift
-           echo "API Key set to $_API_KEY"
-        ;;
-        *) CERTBOT_ARGS+=("$1") ;;
+            _API_KEY="$2"
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [--tz-api-key=API_KEY] [LEGO_ARGS...]"
+            echo "Example: $0 --email your@email.com --domains example.com --dns globalsign run"
+            exit 0
+            ;;
+        *) LEGO_ARGS+=("$1") ;;
     esac
     shift
 done
 
-# Explicitly set the ACME server
-CERTBOT_ARGS+=(--server "https://acme.sectigo.com/v2/DV")
-echo "ACME server set in CERTBOT_ARGS"
-
-set -- "${CERTBOT_ARGS[@]}"
-
 # Always prompt for EAB credentials
 prompt_for_eab_credentials
 
-# Debug: Print the Certbot command with arguments
-echo "Certbot command: certbot ${CERTBOT_ARGS[@]}"
+# Set default ACME server for GlobalSign
+LEGO_ARGS+=(
+    --server "https://emea.acme.atlas.globalsign.com/directory"
+)
 
-certbot "${CERTBOT_ARGS[@]}"
+# Debug: Print the lego command (without sensitive data)
+echo "lego command: lego ${LEGO_ARGS[@]/--hmac */--hmac ***}"
+
+# Run lego
+lego "${LEGO_ARGS[@]}"
