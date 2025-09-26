@@ -6,26 +6,20 @@ BOT_SCRIPT_LOCATION=${BOT_SCRIPT_LOCATION:-"https://raw.githubusercontent.com/ma
 if ! command -v lego >/dev/null 2>&1; then
     echo "lego is not installed. Checking for Go..."
 
-    # Check if Go is installed; if not, install it.
-    if ! command -v go >/dev/null 2>&1; then
-        echo "Go is not installed. Attempting to install Go..."
-        # Detect the OS and install Go accordingly
-        if command -v apt-get >/dev/null 2>&1; then
-            # Debian/Ubuntu
-            sudo apt-get update
-            sudo apt-get install -y golang
-        elif command -v yum >/dev/null 2>&1; then
-            # RHEL/CentOS
-            sudo yum install -y golang
-        elif command -v brew >/dev/null 2>&1; then
-            # macOS
-            brew install go
-        else
-            echo "Unsupported system for automatic Go installation. Please install Go manually and rerun this script."
+    # Check if Go is installed and is at least version 1.23
+    if ! command -v go >/dev/null 2>&1 || [[ $(go version | awk '{print $3}' | cut -d. -f2) -lt 23 ]]; then
+        echo "Go is not installed or is too old. Installing the latest version of Go..."
+
+        # Download and install the latest version of Go
+        sudo rm -rf /usr/local/go
+        curl -s https://go.dev/dl/go1.22.3.linux-amd64.tar.gz | sudo tar -C /usr/local -xz
+        export PATH=$PATH:/usr/local/go/bin
+
+        # Verify Go installation
+        if ! command -v go >/dev/null 2>&1; then
+            echo "Go installation failed. Please install Go manually and rerun this script."
             exit 1
         fi
-        # Ensure Go binaries are in PATH
-        export PATH=$PATH:/usr/local/go/bin
     fi
 
     # Install lego using go install
